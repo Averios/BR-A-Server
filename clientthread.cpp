@@ -5,7 +5,6 @@ ClientThread::ClientThread(qintptr ID, QLinkedList<ClientThread*>* clientList, Q
 {
     this->socketDescriptor = ID;
     this->clientList = clientList;
-    clientList->append(this);
 }
 
 void ClientThread::run(){
@@ -15,10 +14,10 @@ void ClientThread::run(){
 
     if(!socket->setSocketDescriptor(this->socketDescriptor)){
         emit error(socket->error());
-        clientList->removeOne(this);
         return;
     }
 
+    clientList->append(this);
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
@@ -39,15 +38,29 @@ void ClientThread::readyRead(){
     QStringList stringList = stream.split(QRegExp("\n|\r\n|\r"));
     const int listSize = stringList.size();
     for(int i = 0; i < listSize; i++){
+        //if the character is walking then process it here
         if(stringList.at(i).at(0) == 'W'){
             moveQueue->append(stringList.at(i));
         }
     }
 }
 
+void ClientThread::addBroadcaster(Broadcaster *broadcast){
+    this->broadcast = broadcast;
+}
+
+void ClientThread::addBulletCalculator(BulletCalculator *bullet){
+    this->bullet = bullet;
+}
+
+void ClientThread::sendData(QString data){
+    this->socket->write(data.toUtf8());
+}
+
 void ClientThread::disconnected(){
     qDebug() << "Disconnected";
 
+    clientList->removeOne(this);
     socket->deleteLater();
     exit(0);
 }

@@ -1,21 +1,21 @@
 #ifndef BROADCASTER_H
 #define BROADCASTER_H
 
-#include <QThread>
+#include "batchprocessor.h"
 #include <QQueue>
 
-class Broadcaster : public QThread
+class Broadcaster : public BatchProcessor
 {
     Q_OBJECT
 public:
-    explicit Broadcaster(QObject *parent = 0);
-    void addMessage(QString message);
+    explicit Broadcaster(QLinkedList<ClientThread*>* clientList, QObject *parent = 0);
 signals:
 
 public slots:
+    void processQueue();
 
 private:
-    QQueue<QString> messageQueue;
+    void OnStart();
 
 };
 

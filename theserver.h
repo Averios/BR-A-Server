@@ -2,6 +2,7 @@
 #define THESERVER_H
 
 #include <QTcpServer>
+#include "broadcaster.h"
 #include "clientthread.h"
 
 class TheServer : public QTcpServer
@@ -18,6 +19,7 @@ protected:
     void incomingConnection(qintptr socketDescriptor);
 private:
     QLinkedList<ClientThread*> clientList;
+    Broadcaster* broadcast;
 };
 
 #endif // THESERVER_H

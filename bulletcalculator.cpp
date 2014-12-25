@@ -1,6 +1,6 @@
 #include "bulletcalculator.h"
 
-BulletCalculator::BulletCalculator(QObject *parent) :
-    QThread(parent)
+BulletCalculator::BulletCalculator(QLinkedList<ClientThread *> clientList, QObject *parent) :
+    BatchProcessor(clientList, parent)
 {
 }

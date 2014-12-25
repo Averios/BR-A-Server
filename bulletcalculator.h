@@ -1,18 +1,21 @@
 #ifndef BULLETCALCULATOR_H
 #define BULLETCALCULATOR_H
 
-#include <QThread>
+#include "batchprocessor.h"
 
-class BulletCalculator : public QThread
+class BulletCalculator : public BatchProcessor
 {
     Q_OBJECT
 public:
-    explicit BulletCalculator(QObject *parent = 0);
+    explicit BulletCalculator(QLinkedList<ClientThread*> clientList, QObject *parent = 0);
 
 signals:
 
 public slots:
+    void processQueue();
 
+private:
+    void OnStart();
 };
 
 #endif // BULLETCALCULATOR_H
