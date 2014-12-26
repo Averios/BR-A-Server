@@ -30,6 +30,8 @@ public:
     void addBulletCalculator(BulletCalculator* bullet);
     void sendData(QString data);
     void setInitialPosition(sf::Vector2f position);
+    void setNumber(int number);
+    void startGame();
     sf::FloatRect getBoundingBox();
 
 signals:
@@ -41,18 +43,28 @@ public slots:
     void processQueue();
 
 private:
+    void loadMap();
     QTcpSocket* socket;
     qintptr socketDescriptor;
     QLinkedList<ClientThread*>* clientList;
     QQueue<QString>* moveQueue;
     QTimer* processTimer;
     QString name;
+
+    int playerNumber;
+
     sf::Vector2f position;
+    sf::Vector2f movement;
 
     Broadcaster* broadcast;
     BulletCalculator* bullet;
     sf::Time Elapsed;
     sf::Clock myClock;
+    int moveCounter;
+    float movespeed;
+
+    tmx::MapLoader* map;
+    QLinkedList<sf::Vector2f> playerCollisionPoint;
 };
 
 #endif // CLIENTTHREAD_H

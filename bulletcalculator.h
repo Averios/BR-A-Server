@@ -22,11 +22,13 @@ public slots:
 
 private:
     void OnStart();
+    void loadMap();
     Broadcaster* broadcast;
     QLinkedList<ClientThread*>* clientList;
 
     sf::Clock myClock;
     sf::Time Elapsed;
+    tmx::MapLoader* map;
 };
 
 #endif // BULLETCALCULATOR_H

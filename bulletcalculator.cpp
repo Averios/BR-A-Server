@@ -23,3 +23,7 @@ void BulletCalculator::processQueue(){
     Elapsed = myClock.restart();
     //Do calculation
 }
+
+void BulletCalculator::loadMap(){
+    this->map = broadcast->getMap();
+}

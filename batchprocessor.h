@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QQueue>
 #include <QLinkedList>
-//#include "clientthread.h"
+#include <tmx/MapLoader.h>
 
 
 class BatchProcessor : public QThread
@@ -24,6 +24,7 @@ private:
     QTimer processTimer;
 protected:
     QQueue<QString> EventQueue;
+    tmx::MapLoader* map;
 };
 
 #endif // BATCHPROCESSOR_H

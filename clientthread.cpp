@@ -26,8 +26,17 @@ void ClientThread::run(){
     processTimer->start(10);
 
     moveQueue = new QQueue<QString>();
+    moveCounter = 0;
+    movespeed = 100;
 
     qDebug() << socketDescriptor << " Socket connected";
+
+    playerCollisionPoint.append(sf::Vector2f(0.f, 48.f));
+    playerCollisionPoint.append(sf::Vector2f(32.f, 48.f));
+    playerCollisionPoint.append(sf::Vector2f(0.f, 32.f));
+    playerCollisionPoint.append(sf::Vector2f(32.f, 32.f));
+
+    startGame();
 
     exec();
 }
@@ -68,10 +77,65 @@ void ClientThread::disconnected(){
 void ClientThread::processQueue(){
     //Do calculation and send to broadcaster
     Elapsed = myClock.restart();
+    QString moveString;
+
+    while(!moveQueue->isEmpty()){
+        moveString = moveQueue->dequeue();
+        movement.x = 0;
+        movement.y = 0;
+        switch(moveString.at(1)){
+            case 'U' : movement.y -= movespeed;
+                break;
+            case 'D' : movement.y += movespeed;
+                break;
+            case 'R' : movement.x += movespeed;
+                break;
+            case 'L' : movement.x -= movespeed;
+                break;
+        }
+        movement *= Elapsed.asSeconds();
+        bool collided = false;
+        for(const tmx::MapObject* now : map->QueryQuadTree(getBoundingBox())){
+            if(now->GetName() == "Wall" || now->GetName() == "Edge"){
+                QLinkedList::const_iterator itr = playerCollisionPoint.cbegin();
+                QLinkedList::const_iterator end = playerCollisionPoint.cend();
+                for(; itr != end; ++itr){
+                    if(now->Contains( (*itr) )){
+                        collided = true;
+                        break;
+                    }
+                }
+                if(collided){
+                    break;
+                }
+            }
+        }
+        if(!collided){
+            position += movement;
+        }
+
+        moveCounter++;
+    }
+
+    broadcast->addEvent("W" + " " + QString::number(playerNumber) + " " + moveString.at(1) + " " + QString::number(position.x) + " " + QString::number(position.y) + "\n");
+
 }
 
 sf::FloatRect ClientThread::getBoundingBox(){
     return sf::FloatRect(position.x, position.y, 32, 48);
+}
+
+void ClientThread::loadMap(){
+    this->map = broadcast->getMap();
+}
+
+void ClientThread::startGame(){
+    loadMap();
+    //Send notification to player
+}
+
+void ClientThread::setNumber(int number){
+    this->playerNumber = number;
 }
 
 ClientThread::~ClientThread(){

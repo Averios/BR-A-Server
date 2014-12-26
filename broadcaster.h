@@ -12,6 +12,7 @@ class Broadcaster : public BatchProcessor
 public:
     explicit Broadcaster(QLinkedList<ClientThread*>* clientList, QObject *parent = 0);
     void addEvent(QString event);
+    tmx::MapLoader* getMap();
 signals:
 
 public slots:
