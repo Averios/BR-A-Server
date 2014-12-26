@@ -2,13 +2,16 @@
 #define BROADCASTER_H
 
 #include "batchprocessor.h"
-#include <QQueue>
+#include "clientthread.h"
+
+class ClientThread;
 
 class Broadcaster : public BatchProcessor
 {
     Q_OBJECT
 public:
     explicit Broadcaster(QLinkedList<ClientThread*>* clientList, QObject *parent = 0);
+    void addEvent(QString event);
 signals:
 
 public slots:
@@ -16,7 +19,7 @@ public slots:
 
 private:
     void OnStart();
-
+    QLinkedList<ClientThread*>* clientList;
 };
 
 #endif // BROADCASTER_H

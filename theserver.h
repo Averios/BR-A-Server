@@ -2,6 +2,7 @@
 #define THESERVER_H
 
 #include <QTcpServer>
+//#include <tmx/MapLoader.h>
 #include "broadcaster.h"
 #include "clientthread.h"
 
@@ -20,6 +21,7 @@ protected:
 private:
     QLinkedList<ClientThread*> clientList;
     Broadcaster* broadcast;
+//    tmx::MapLoader map;
 };
 
 #endif // THESERVER_H

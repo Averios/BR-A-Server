@@ -12,7 +12,7 @@ TARGET = Reiz
 CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG += c++11
-LIBS *= -lsfml-system
+LIBS *= -lsfml-system -ltmx-loader
 
 TEMPLATE = app
 

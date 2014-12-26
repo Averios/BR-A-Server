@@ -1,8 +1,9 @@
 #include "broadcaster.h"
 
 Broadcaster::Broadcaster(QLinkedList<ClientThread *> *clientList, QObject *parent) :
-    BatchProcessor(clientList, parent)
+    BatchProcessor(parent)
 {
+    this->clientList = clientList;
 }
 
 void Broadcaster::OnStart(){
@@ -20,4 +21,8 @@ void Broadcaster::processQueue(){
             (*itr)->sendData(eventNow);
         }
     }
+}
+
+void Broadcaster::addEvent(QString event){
+    EventQueue << event;
 }

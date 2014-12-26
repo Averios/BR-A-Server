@@ -8,8 +8,16 @@
 #include <QDebug>
 #include <QTimer>
 #include <SFML/System.hpp>
+#include <SFML/Graphics/Rect.hpp>
+
+#include "batchprocessor.h"
 #include "broadcaster.h"
 #include "bulletcalculator.h"
+
+
+class BatchProcessor;
+class BulletCalculator;
+class Broadcaster;
 
 class ClientThread : public QThread
 {
@@ -22,7 +30,7 @@ public:
     void addBulletCalculator(BulletCalculator* bullet);
     void sendData(QString data);
     void setInitialPosition(sf::Vector2f position);
-
+    sf::FloatRect getBoundingBox();
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
@@ -43,6 +51,8 @@ private:
 
     Broadcaster* broadcast;
     BulletCalculator* bullet;
+    sf::Time Elapsed;
+    sf::Clock myClock;
 };
 
 #endif // CLIENTTHREAD_H

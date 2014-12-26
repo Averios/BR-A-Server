@@ -25,7 +25,7 @@ void ClientThread::run(){
     connect(processTimer, SIGNAL(timeout()), this, SLOT(processQueue()));
     processTimer->start(10);
 
-    moveQueue = new QQueue;
+    moveQueue = new QQueue<QString>();
 
     qDebug() << socketDescriptor << " Socket connected";
 
@@ -67,6 +67,11 @@ void ClientThread::disconnected(){
 
 void ClientThread::processQueue(){
     //Do calculation and send to broadcaster
+    Elapsed = myClock.restart();
+}
+
+sf::FloatRect ClientThread::getBoundingBox(){
+    return sf::FloatRect(position.x, position.y, 32, 48);
 }
 
 ClientThread::~ClientThread(){

@@ -5,25 +5,25 @@
 #include <QTimer>
 #include <QQueue>
 #include <QLinkedList>
-#include "clientthread.h"
+//#include "clientthread.h"
+
 
 class BatchProcessor : public QThread
 {
     Q_OBJECT
 public:
-    explicit BatchProcessor(QLinkedList<ClientThread>* clientList, QObject *parent = 0, int interval = 10);
+    explicit BatchProcessor(QObject *parent = 0, int interval = 10);
     void run();
-    void addEvent(QString event);
+    virtual void addEvent(QString event) = 0;
 signals:
 
 public slots:
     virtual void processQueue() = 0;
 private:
     virtual void OnStart() = 0;
-
     QTimer processTimer;
+protected:
     QQueue<QString> EventQueue;
-    QLinkedList<ClientThread*>* clientList;
 };
 
 #endif // BATCHPROCESSOR_H
