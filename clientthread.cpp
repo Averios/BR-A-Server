@@ -83,7 +83,7 @@ void ClientThread::processQueue(){
         moveString = moveQueue->dequeue();
         movement.x = 0;
         movement.y = 0;
-        switch(moveString.at(1)){
+        switch(moveString.at(1).toLatin1()){
             case 'U' : movement.y -= movespeed;
                 break;
             case 'D' : movement.y += movespeed;
@@ -97,8 +97,8 @@ void ClientThread::processQueue(){
         bool collided = false;
         for(const tmx::MapObject* now : map->QueryQuadTree(getBoundingBox())){
             if(now->GetName() == "Wall" || now->GetName() == "Edge"){
-                QLinkedList::const_iterator itr = playerCollisionPoint.cbegin();
-                QLinkedList::const_iterator end = playerCollisionPoint.cend();
+                QLinkedList<sf::Vector2f>::const_iterator itr = playerCollisionPoint.cbegin();
+                QLinkedList<sf::Vector2f>::const_iterator end = playerCollisionPoint.cend();
                 for(; itr != end; ++itr){
                     if(now->Contains( (*itr) )){
                         collided = true;
@@ -117,7 +117,7 @@ void ClientThread::processQueue(){
         moveCounter++;
     }
 
-    broadcast->addEvent("W" + " " + QString::number(playerNumber) + " " + moveString.at(1) + " " + QString::number(position.x) + " " + QString::number(position.y) + "\n");
+    broadcast->addEvent("W " + QString::number(playerNumber) + QString::fromStdString(" ") + moveString.at(1) + QString::fromStdString(" ") + QString::number(position.x) + QString::fromStdString(" ") + QString::number(position.y) + "\n");
 
 }
 
