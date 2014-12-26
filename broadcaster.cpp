@@ -1,6 +1,6 @@
 #include "broadcaster.h"
 
-Broadcaster::Broadcaster(QLinkedList<ClientThread *> *clientList, QObject *parent) :
+Broadcaster::Broadcaster(QList<ClientThread *> *clientList, QObject *parent) :
     BatchProcessor(parent)
 {
     this->clientList = clientList;
@@ -17,8 +17,8 @@ void Broadcaster::processQueue(){
 
     while(!EventQueue.isEmpty()){
         eventNow = EventQueue.dequeue();
-        QLinkedList<ClientThread*>::const_iterator itr = clientList->cbegin();
-        QLinkedList<ClientThread*>::const_iterator end = clientList->cend();
+        QList<ClientThread*>::const_iterator itr = clientList->cbegin();
+        QList<ClientThread*>::const_iterator end = clientList->cend();
         for(; itr != end; ++itr){
             (*itr)->sendData(eventNow);
         }

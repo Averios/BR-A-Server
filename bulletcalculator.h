@@ -4,6 +4,7 @@
 #include "batchprocessor.h"
 #include "broadcaster.h"
 #include "clientthread.h"
+#include "bullet.h"
 
 class ClientThread;
 class Broadcaster;
@@ -12,7 +13,7 @@ class BulletCalculator : public BatchProcessor
 {
     Q_OBJECT
 public:
-    explicit BulletCalculator(QLinkedList<ClientThread *>* clientList, QObject *parent = 0);
+    explicit BulletCalculator(QList<ClientThread *> *clientList, QObject *parent = 0);
     void addEvent(QString event);
     void addBroadcaster(Broadcaster* broadcast);
 signals:
@@ -24,11 +25,13 @@ private:
     void OnStart();
     void loadMap();
     Broadcaster* broadcast;
-    QLinkedList<ClientThread*>* clientList;
+    QList<ClientThread*>* clientList;
+    QList<Bullet> BulletList;
 
     sf::Clock myClock;
     sf::Time Elapsed;
     tmx::MapLoader* map;
+    double bulletSpeed;
 };
 
 #endif // BULLETCALCULATOR_H

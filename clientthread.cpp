@@ -1,6 +1,6 @@
 #include "clientthread.h"
 
-ClientThread::ClientThread(qintptr ID, QLinkedList<ClientThread*>* clientList, QObject *parent) :
+ClientThread::ClientThread(qintptr ID, QList<ClientThread*>* clientList, QObject *parent) :
     QThread(parent)
 {
     this->socketDescriptor = ID;
@@ -51,6 +51,12 @@ void ClientThread::readyRead(){
         if(stringList.at(i).at(0) == 'W'){
             moveQueue->append(stringList.at(i));
         }
+        else if(stringList.at(i).at(0) == 'F'){
+            QString Fire = stringList.at(i);
+            broadcast->addEvent(Fire);
+            Fire.append(QString(" ") + QString::number(playerNumber));
+            bullet->addEvent(Fire);
+        }
     }
 }
 
@@ -97,8 +103,8 @@ void ClientThread::processQueue(){
         bool collided = false;
         for(const tmx::MapObject* now : map->QueryQuadTree(getBoundingBox())){
             if(now->GetName() == "Wall" || now->GetName() == "Edge"){
-                QLinkedList<sf::Vector2f>::const_iterator itr = playerCollisionPoint.cbegin();
-                QLinkedList<sf::Vector2f>::const_iterator end = playerCollisionPoint.cend();
+                QList<sf::Vector2f>::const_iterator itr = playerCollisionPoint.cbegin();
+                QList<sf::Vector2f>::const_iterator end = playerCollisionPoint.cend();
                 for(; itr != end; ++itr){
                     if(now->Contains( (*itr) )){
                         collided = true;
@@ -117,7 +123,7 @@ void ClientThread::processQueue(){
         moveCounter++;
     }
 
-    broadcast->addEvent("W " + QString::number(playerNumber) + QString::fromStdString(" ") + moveString.at(1) + QString::fromStdString(" ") + QString::number(position.x) + QString::fromStdString(" ") + QString::number(position.y) + "\n");
+    broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + "\n");
 
 }
 
@@ -141,4 +147,8 @@ void ClientThread::setNumber(int number){
 ClientThread::~ClientThread(){
     delete processTimer;
     delete moveQueue;
+}
+
+int ClientThread::getNumber(){
+    return playerNumber;
 }

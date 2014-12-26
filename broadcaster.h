@@ -10,7 +10,7 @@ class Broadcaster : public BatchProcessor
 {
     Q_OBJECT
 public:
-    explicit Broadcaster(QLinkedList<ClientThread*>* clientList, QObject *parent = 0);
+    explicit Broadcaster(QList<ClientThread*>* clientList, QObject *parent = 0);
     void addEvent(QString event);
     tmx::MapLoader* getMap();
 signals:
@@ -20,7 +20,7 @@ public slots:
 
 private:
     void OnStart();
-    QLinkedList<ClientThread*>* clientList;
+    QList<ClientThread*>* clientList;
 };
 
 #endif // BROADCASTER_H

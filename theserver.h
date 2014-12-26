@@ -18,8 +18,9 @@ public slots:
 protected:
     void incomingConnection(qintptr socketDescriptor);
 private:
-    QLinkedList<ClientThread*> clientList;
+    QList<ClientThread*> clientList;
     Broadcaster* broadcast;
+    BulletCalculator* bullet;
     int playerCount;
 };
 

@@ -19,12 +19,15 @@ void TheServer::startserver(){
 
     broadcast = new Broadcaster(&clientList, this);
     broadcast->run();
+    bullet = new BulletCalculator(&clientList, this);
+    bullet->run();
 }
 
 void TheServer::incomingConnection(qintptr socketDescriptor){
     qDebug() << "Connecting...";
     ClientThread* client = new ClientThread(socketDescriptor, &clientList, this);
     client->addBroadcaster(broadcast);
+    client->addBulletCalculator(bullet);
     client->setNumber(playerCount++);
     connect(client, SIGNAL(finished()), client, SLOT(deleteLater()));
     client->run();

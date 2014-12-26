@@ -2,7 +2,7 @@
 #define CLIENTTHREAD_H
 
 #include <QThread>
-#include <QLinkedList>
+#include <QList>
 #include <QQueue>
 #include <QTcpSocket>
 #include <QDebug>
@@ -23,7 +23,7 @@ class ClientThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit ClientThread(qintptr ID, QLinkedList<ClientThread*>* clientList, QObject *parent = 0);
+    explicit ClientThread(qintptr ID, QList<ClientThread*>* clientList, QObject *parent = 0);
     virtual ~ClientThread();
     void run();
     void addBroadcaster(Broadcaster* broadcast);
@@ -33,6 +33,7 @@ public:
     void setNumber(int number);
     void startGame();
     sf::FloatRect getBoundingBox();
+    int getNumber();
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
@@ -46,7 +47,7 @@ private:
     void loadMap();
     QTcpSocket* socket;
     qintptr socketDescriptor;
-    QLinkedList<ClientThread*>* clientList;
+    QList<ClientThread*>* clientList;
     QQueue<QString>* moveQueue;
     QTimer* processTimer;
     QString name;
@@ -64,7 +65,7 @@ private:
     float movespeed;
 
     tmx::MapLoader* map;
-    QLinkedList<sf::Vector2f> playerCollisionPoint;
+    QList<sf::Vector2f> playerCollisionPoint;
 };
 
 #endif // CLIENTTHREAD_H
