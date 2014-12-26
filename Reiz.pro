@@ -22,11 +22,13 @@ SOURCES += main.cpp \
     clientthread.cpp \
     bulletcalculator.cpp \
     broadcaster.cpp \
-    batchprocessor.cpp
+    batchprocessor.cpp \
+    bullet.cpp
 
 HEADERS += \
     theserver.h \
     clientthread.h \
     bulletcalculator.h \
     broadcaster.h \
-    batchprocessor.h
+    batchprocessor.h \
+    bullet.h
