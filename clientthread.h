@@ -48,7 +48,7 @@ private:
     QTcpSocket* socket;
     qintptr socketDescriptor;
     QList<ClientThread*>* clientList;
-    QQueue<QString>* moveQueue;
+    QQueue<QPair<QString, float > >* moveQueue;
     QTimer* processTimer;
     QString name;
 
@@ -60,6 +60,7 @@ private:
     Broadcaster* broadcast;
     BulletCalculator* bullet;
     sf::Time Elapsed;
+    sf::Time Last;
     sf::Clock myClock;
     int moveCounter;
     float movespeed;

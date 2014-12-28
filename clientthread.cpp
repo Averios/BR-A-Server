@@ -24,8 +24,8 @@ void ClientThread::run(){
     processTimer = new QTimer(this);
     connect(processTimer, SIGNAL(timeout()), this, SLOT(processQueue()));
     processTimer->start(10);
-
-    moveQueue = new QQueue<QString>();
+    Last = sf::seconds(0);
+    moveQueue = new QQueue<QPair<QString, float> >();
     moveCounter = 0;
     movespeed = 100;
 
@@ -44,20 +44,31 @@ void ClientThread::run(){
 void ClientThread::readyRead(){
     QByteArray data = socket->readAll();
     QString stream(data);
-    QStringList stringList = stream.split(QRegExp("\n|\r\n|\r"));
-    const int listSize = stringList.size();
-    for(int i = 0; i < listSize; i++){
+//    QStringList stringList = stream.split(QRegExp("\n|\r\n|\r"));
+//    const int listSize = stringList.size();
+//    for(int i = 0; i < listSize; i++){
         //if the character is walking then process it here
-        if(stringList.at(i).at(0) == 'W'){
-            moveQueue->append(stringList.at(i));
+        if(stream.at(0) == 'W'){
+            Elapsed = myClock.getElapsedTime() - Last;
+            Last = myClock.getElapsedTime();
+            moveQueue->append(QPair<QString, float>(stream.at(0), Elapsed.asSeconds()));
         }
-        else if(stringList.at(i).at(0) == 'F'){
-            QString Fire = stringList.at(i);
+        else if(stream.at(0) == 'F'){
+            QString Fire = stream;
             broadcast->addEvent(Fire);
             Fire.append(QString(" ") + QString::number(playerNumber));
             bullet->addEvent(Fire);
         }
-    }
+        else if(stream.at(0) == 'C'){
+            QString message;
+            QStringList msgList = stream.split(" ");
+            int msgSize = msgList.size();
+            for(int j = 1; j < msgSize; j++){
+                message += " " + msgList.at(j);
+            }
+            broadcast->addEvent(QString("C ") + QString::number(this->playerNumber) + message);
+        }
+//    }
 }
 
 void ClientThread::addBroadcaster(Broadcaster *broadcast){
@@ -82,14 +93,15 @@ void ClientThread::disconnected(){
 
 void ClientThread::processQueue(){
     //Do calculation and send to broadcaster
-    Elapsed = myClock.restart();
-    QString moveString;
-
+    myClock.restart();
+    Last = sf::seconds(0);
+    QPair<QString, float> moveString;
+    bool queueEmpty = moveQueue->isEmpty();
     while(!moveQueue->isEmpty()){
         moveString = moveQueue->dequeue();
         movement.x = 0;
         movement.y = 0;
-        switch(moveString.at(1).toLatin1()){
+        switch(moveString.first.at(1).toLatin1()){
             case 'U' : movement.y -= movespeed;
                 break;
             case 'D' : movement.y += movespeed;
@@ -99,7 +111,7 @@ void ClientThread::processQueue(){
             case 'L' : movement.x -= movespeed;
                 break;
         }
-        movement *= Elapsed.asSeconds();
+        movement *= moveString.second;
         bool collided = false;
         for(const tmx::MapObject* now : map->QueryQuadTree(getBoundingBox())){
             if(now->GetName() == "Wall" || now->GetName() == "Edge"){
@@ -122,8 +134,9 @@ void ClientThread::processQueue(){
 
         moveCounter++;
     }
-
-    broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + "\n");
+    if(!queueEmpty){
+        broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + "\n");
+    }
 
 }
 
