@@ -57,6 +57,7 @@ void BulletCalculator::processQueue(){
                 if(now.getBoundingBox().intersects(player->getBoundingBox())){
                     broadcast->addEvent("K " + QString::number(now.getSender()) + QString(" ") + QString::number(player->getNumber()) + "\n");
                     //Send the respawn point to player
+                    broadcast->respawn(player->getNumber());
                     collide2 = true;
                     break;
                 }

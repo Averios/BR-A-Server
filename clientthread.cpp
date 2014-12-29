@@ -165,3 +165,7 @@ ClientThread::~ClientThread(){
 int ClientThread::getNumber(){
     return playerNumber;
 }
+
+void ClientThread::setInitialPosition(sf::Vector2f position){
+    this->position = position;
+}
