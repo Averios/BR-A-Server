@@ -23,11 +23,11 @@ void ClientThread::run(){
 
     processTimer = new QTimer(this);
     connect(processTimer, SIGNAL(timeout()), this, SLOT(processQueue()));
-    processTimer->start(10);
+    processTimer->start(100);
     Last = sf::seconds(0);
     moveQueue = new QQueue<QPair<QString, float> >();
     moveCounter = 0;
-    movespeed = 200;
+    movespeed = 150;
 
     qDebug() << socketDescriptor << " Socket connected";
 
