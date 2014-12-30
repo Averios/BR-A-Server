@@ -23,7 +23,7 @@ void Broadcaster::processQueue(){
     }
     while(!EventQueue.isEmpty()){
         eventNow = EventQueue.dequeue();
-        qDebug() << eventNow;
+        std::cout << eventNow.toStdString() << std::endl;
         int size = clientList->size();
         for(int i = 0; i < size; i++){
             clientList->at(i)->sendData(eventNow);

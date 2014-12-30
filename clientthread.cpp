@@ -27,7 +27,7 @@ void ClientThread::run(){
     Last = sf::seconds(0);
     moveQueue = new QQueue<QPair<QString, float> >();
     moveCounter = 0;
-    movespeed = 100;
+    movespeed = 300;
 
     qDebug() << socketDescriptor << " Socket connected";
 
@@ -46,8 +46,8 @@ void ClientThread::readyRead(){
     qDebug() << stream;
 
         if(stream.at(0) == 'W'){
-            Elapsed = myClock.getElapsedTime() - Last;
-            Last = myClock.getElapsedTime();
+//            Elapsed = myClock.getElapsedTime() - Last;
+//            Last = myClock.getElapsedTime();
             moveQueue->append(QPair<QString, float>(stream, Elapsed.asSeconds()));
         }
         else if(stream.at(0) == 'F'){
@@ -77,7 +77,7 @@ void ClientThread::addBulletCalculator(BulletCalculator *bullet){
 }
 
 void ClientThread::sendData(QString data){
-    qDebug() << data;
+//    qDebug() << data;
     this->socket->write(data.toUtf8());
 //    this->socket->flush();
 }
@@ -92,7 +92,7 @@ void ClientThread::disconnected(){
 
 void ClientThread::processQueue(){
     //Do calculation and send to broadcaster
-    myClock.restart();
+    Elapsed = myClock.restart();
     Last = sf::seconds(0);
     QPair<QString, float> moveString;
     bool queueEmpty = moveQueue->isEmpty();
@@ -100,7 +100,7 @@ void ClientThread::processQueue(){
         moveString = moveQueue->dequeue();
         movement.x = 0;
         movement.y = 0;
-        qDebug() << moveString.first;
+//        qDebug() << moveString.first;
         switch(moveString.first.at(1).toLatin1()){
             case 'U' : movement.y -= movespeed;
                 break;
@@ -111,7 +111,7 @@ void ClientThread::processQueue(){
             case 'L' : movement.x -= movespeed;
                 break;
         }
-        movement *= moveString.second;
+        movement *= Elapsed.asSeconds();
         bool collided = false;
         for(const tmx::MapObject* now : map->QueryQuadTree(getBoundingBox())){
             if(now->GetName() == "Wall" || now->GetName() == "Edge"){
@@ -131,7 +131,9 @@ void ClientThread::processQueue(){
     }
     if(!queueEmpty){
         //W num U/D/R/L X Y Seq
-        broadcast->addEvent("W" + moveString.first.at(1).toLatin1() + QString(" ") + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + QString::number(moveCounter) + "\n");
+        QString theEvent = moveString.first.split(" ").at(0) + QString(" ") + QString::number(playerNumber) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + QString::number(moveCounter) + "\n";
+        std::cout << theEvent.toStdString();
+        broadcast->addEvent(theEvent);
     }
 
 }
