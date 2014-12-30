@@ -31,11 +31,6 @@ void ClientThread::run(){
 
     qDebug() << socketDescriptor << " Socket connected";
 
-    playerCollisionPoint.append(sf::Vector2f(0.f, 48.f));
-    playerCollisionPoint.append(sf::Vector2f(32.f, 48.f));
-    playerCollisionPoint.append(sf::Vector2f(0.f, 32.f));
-    playerCollisionPoint.append(sf::Vector2f(32.f, 32.f));
-
     startGame();
 
     exec();
@@ -115,15 +110,8 @@ void ClientThread::processQueue(){
         bool collided = false;
         for(const tmx::MapObject* now : map->QueryQuadTree(getBoundingBox())){
             if(now->GetName() == "Wall" || now->GetName() == "Edge"){
-                QList<sf::Vector2f>::const_iterator itr = playerCollisionPoint.cbegin();
-                QList<sf::Vector2f>::const_iterator end = playerCollisionPoint.cend();
-                for(; itr != end; ++itr){
-                    if(now->Contains( (*itr) )){
-                        collided = true;
-                        break;
-                    }
-                }
-                if(collided){
+                if(now->GetAABB().intersects(sf::FloatRect(position.x + movement.x, position.y + movement.y + 32.f, 32.f, 16.f))){
+                    collided = true;
                     break;
                 }
             }
@@ -132,10 +120,11 @@ void ClientThread::processQueue(){
             position += movement;
         }
 
-        moveCounter++;
+        moveCounter = moveString.first.split(" ").at(1).toInt();
     }
     if(!queueEmpty){
-        broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + "\n");
+        //W num U/D/R/L X Y Seq
+        broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + moveString.first.split(" ").at(1) + "\n");
     }
 
 }

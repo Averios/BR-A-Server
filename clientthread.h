@@ -66,7 +66,6 @@ private:
     float movespeed;
 
     tmx::MapLoader* map;
-    QList<sf::Vector2f> playerCollisionPoint;
 };
 
 #endif // CLIENTTHREAD_H
