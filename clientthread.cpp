@@ -119,12 +119,14 @@ void ClientThread::processQueue(){
         if(!collided){
             position += movement;
         }
-
-        moveCounter = moveString.first.split(" ").at(1).toInt();
+        int moveNumber = moveString.first.split(" ").at(1).toInt();
+        if(moveNumber > moveCounter){
+            moveCounter = moveNumber;
+        }
     }
     if(!queueEmpty){
         //W num U/D/R/L X Y Seq
-        broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + moveString.first.split(" ").at(1) + "\n");
+        broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + QString::number(moveCounter) + "\n");
     }
 
 }
