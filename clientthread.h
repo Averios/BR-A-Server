@@ -34,6 +34,7 @@ public:
     void startGame();
     sf::FloatRect getBoundingBox();
     int getNumber();
+    void resetCounter();
 
 signals:
     void error(QTcpSocket::SocketError socketerror);

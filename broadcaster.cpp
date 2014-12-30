@@ -17,10 +17,10 @@ void Broadcaster::OnStart(){
 void Broadcaster::processQueue(){
     QString eventNow;
 //    qDebug() << EventQueue.size();
-    if(!started && clientList->size() > 0){
-        this->StartGame();
-        started = true;
-    }
+//    if(!started && clientList->size() > 0){
+//        this->StartGame();
+//        started = true;
+//    }
     while(!EventQueue.isEmpty()){
         eventNow = EventQueue.dequeue();
         std::cout << eventNow.toStdString() << std::endl;
@@ -49,7 +49,13 @@ void Broadcaster::initiatePosition(){
             }
         }
     }
-
+    QString newZ("N ");
+    for(ClientThread* playa : *clientList){
+        newZ += QString::number(playa->getNumber()) + QString(" ");
+        playa->resetCounter();
+    }
+    newZ += "\n";
+    EventQueue.append(newZ);
     std::shuffle(SpawnPoint.begin(), SpawnPoint.end(), rng);
     int playerSize = clientList->size();
 //    qDebug() << playerSize;

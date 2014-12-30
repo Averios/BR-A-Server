@@ -27,11 +27,12 @@ void ClientThread::run(){
     Last = sf::seconds(0);
     moveQueue = new QQueue<QPair<QString, float> >();
     moveCounter = 0;
-    movespeed = 300;
+    movespeed = 200;
 
     qDebug() << socketDescriptor << " Socket connected";
 
     startGame();
+
 
     exec();
 }
@@ -41,31 +42,31 @@ void ClientThread::readyRead(){
     QString stream(data);
 //    QStringList stringList = stream.split(QRegExp("\n|\r\n|\r"));
 //    const int listSize = stringList.size();
-//    for(int i = 0; i < listSize; i++){
+    for(QString now : stream.split("\n")){
         //if the character is walking then process it here
     qDebug() << stream;
-
-        if(stream.at(0) == 'W'){
+        if(now == NULL)continue;
+        if(now.at(0) == 'W'){
 //            Elapsed = myClock.getElapsedTime() - Last;
 //            Last = myClock.getElapsedTime();
-            moveQueue->append(QPair<QString, float>(stream, Elapsed.asSeconds()));
+            moveQueue->append(QPair<QString, float>(now, Elapsed.asSeconds()));
         }
-        else if(stream.at(0) == 'F'){
-            QString Fire = stream;
+        else if(now.at(0) == 'F'){
+            QString Fire = now;
             broadcast->addEvent(Fire);
             Fire.append(QString(" ") + QString::number(playerNumber));
             bullet->addEvent(Fire);
         }
-        else if(stream.at(0) == 'C'){
+        else if(now.at(0) == 'C'){
             QString message;
-            QStringList msgList = stream.split(" ");
+            QStringList msgList = now.split(" ");
             int msgSize = msgList.size();
             for(int j = 1; j < msgSize; j++){
                 message += " " + msgList.at(j);
             }
-            broadcast->addEvent(QString("C ") + QString::number(this->playerNumber) + message);
+            broadcast->addEvent(QString("C ") + QString::number(this->playerNumber) + message + "\n");
         }
-//    }
+    }
 }
 
 void ClientThread::addBroadcaster(Broadcaster *broadcast){
@@ -152,8 +153,9 @@ void ClientThread::startGame(){
     QString message("P " + QString::number(playerNumber).toUtf8() + "\n");
     qDebug() << message;
     socket->write(message.toUtf8());
+//    broadcast->respawn(this->playerNumber);
 //    socket->flush();
-//    broadcast->StartGame();
+    broadcast->StartGame();
 }
 
 void ClientThread::setNumber(int number){
@@ -171,4 +173,8 @@ int ClientThread::getNumber(){
 
 void ClientThread::setInitialPosition(sf::Vector2f position){
     this->position = position;
+}
+
+void ClientThread::resetCounter(){
+    moveCounter = 0;
 }
