@@ -94,6 +94,7 @@ void ClientThread::disconnected(){
 void ClientThread::processQueue(){
     //Do calculation and send to broadcaster
     Elapsed = myClock.restart();
+    Elapsed /= (float)moveQueue->size();
     Last = sf::seconds(0);
     QPair<QString, float> moveString;
     bool queueEmpty = moveQueue->isEmpty();
