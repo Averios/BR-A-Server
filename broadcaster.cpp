@@ -6,6 +6,7 @@ Broadcaster::Broadcaster(QList<ClientThread *> *clientList, QObject *parent) :
 {
     this->clientList = clientList;
     this->map = new tmx::MapLoader("Resources");
+    started = false;
 }
 
 void Broadcaster::OnStart(){
@@ -15,13 +16,17 @@ void Broadcaster::OnStart(){
 
 void Broadcaster::processQueue(){
     QString eventNow;
-
+//    qDebug() << EventQueue.size();
+    if(!started && clientList->size() > 0){
+        this->StartGame();
+        started = true;
+    }
     while(!EventQueue.isEmpty()){
         eventNow = EventQueue.dequeue();
-        QList<ClientThread*>::const_iterator itr = clientList->cbegin();
-        QList<ClientThread*>::const_iterator end = clientList->cend();
-        for(; itr != end; ++itr){
-            (*itr)->sendData(eventNow);
+        qDebug() << eventNow;
+        int size = clientList->size();
+        for(int i = 0; i < size; i++){
+            clientList->at(i)->sendData(eventNow);
         }
     }
 }
@@ -47,6 +52,7 @@ void Broadcaster::initiatePosition(){
 
     std::shuffle(SpawnPoint.begin(), SpawnPoint.end(), rng);
     int playerSize = clientList->size();
+    qDebug() << playerSize;
     for(int i = 0; i < playerSize; i++){
         clientList->at(i)->setInitialPosition(SpawnPoint.at(i));
         EventQueue.append( "WD " + QString::number(clientList->at(i)->getNumber()) + QString(" ") + QString::number(SpawnPoint.at(i).x) + QString(" ") + QString::number(SpawnPoint.at(i).y) + "\n");
@@ -54,6 +60,7 @@ void Broadcaster::initiatePosition(){
 }
 
 void Broadcaster::StartGame(){
+    qDebug() << "Game Started";
     initiatePosition();
     EventQueue.append("GS\n");
 }

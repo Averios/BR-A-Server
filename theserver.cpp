@@ -31,4 +31,6 @@ void TheServer::incomingConnection(qintptr socketDescriptor){
     client->setNumber(playerCount++);
     connect(client, SIGNAL(finished()), client, SLOT(deleteLater()));
     client->run();
+//    qDebug() << "Client Running";
+//    broadcast->StartGame();
 }

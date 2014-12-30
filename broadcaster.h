@@ -29,6 +29,7 @@ private:
     std::vector<sf::Vector2f> SpawnPoint;
     std::random_device rd;
     std::mt19937 rng;
+    bool started;
 };
 
 #endif // BROADCASTER_H

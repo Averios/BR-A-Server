@@ -75,7 +75,9 @@ void ClientThread::addBulletCalculator(BulletCalculator *bullet){
 }
 
 void ClientThread::sendData(QString data){
+    qDebug() << "Send " << data;
     this->socket->write(data.toUtf8());
+    this->socket->flush();
 }
 
 void ClientThread::disconnected(){
@@ -142,6 +144,9 @@ void ClientThread::loadMap(){
 void ClientThread::startGame(){
     loadMap();
     //Send notification to player
+    socket->write("P " + QString::number(playerNumber).toUtf8() + "\n");
+    socket->flush();
+//    broadcast->StartGame();
 }
 
 void ClientThread::setNumber(int number){
