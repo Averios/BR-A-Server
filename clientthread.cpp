@@ -43,10 +43,12 @@ void ClientThread::readyRead(){
 //    const int listSize = stringList.size();
 //    for(int i = 0; i < listSize; i++){
         //if the character is walking then process it here
+    qDebug() << stream;
+
         if(stream.at(0) == 'W'){
             Elapsed = myClock.getElapsedTime() - Last;
             Last = myClock.getElapsedTime();
-            moveQueue->append(QPair<QString, float>(stream.at(0), Elapsed.asSeconds()));
+            moveQueue->append(QPair<QString, float>(stream, Elapsed.asSeconds()));
         }
         else if(stream.at(0) == 'F'){
             QString Fire = stream;
@@ -75,9 +77,9 @@ void ClientThread::addBulletCalculator(BulletCalculator *bullet){
 }
 
 void ClientThread::sendData(QString data){
-    qDebug() << "Send " << data;
+    qDebug() << data;
     this->socket->write(data.toUtf8());
-    this->socket->flush();
+//    this->socket->flush();
 }
 
 void ClientThread::disconnected(){
@@ -98,6 +100,7 @@ void ClientThread::processQueue(){
         moveString = moveQueue->dequeue();
         movement.x = 0;
         movement.y = 0;
+        qDebug() << moveString.first;
         switch(moveString.first.at(1).toLatin1()){
             case 'U' : movement.y -= movespeed;
                 break;
@@ -128,7 +131,7 @@ void ClientThread::processQueue(){
     }
     if(!queueEmpty){
         //W num U/D/R/L X Y Seq
-        broadcast->addEvent("W " + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + QString::number(moveCounter) + "\n");
+        broadcast->addEvent("W" + moveString.first.at(1).toLatin1() + QString(" ") + QString::number(playerNumber) + QString(" ") + moveString.first.at(1) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + QString::number(moveCounter) + "\n");
     }
 
 }
@@ -144,8 +147,10 @@ void ClientThread::loadMap(){
 void ClientThread::startGame(){
     loadMap();
     //Send notification to player
-    socket->write("P " + QString::number(playerNumber).toUtf8() + "\n");
-    socket->flush();
+    QString message("P " + QString::number(playerNumber).toUtf8() + "\n");
+    qDebug() << message;
+    socket->write(message.toUtf8());
+//    socket->flush();
 //    broadcast->StartGame();
 }
 

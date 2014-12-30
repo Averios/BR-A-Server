@@ -52,10 +52,10 @@ void Broadcaster::initiatePosition(){
 
     std::shuffle(SpawnPoint.begin(), SpawnPoint.end(), rng);
     int playerSize = clientList->size();
-    qDebug() << playerSize;
+//    qDebug() << playerSize;
     for(int i = 0; i < playerSize; i++){
         clientList->at(i)->setInitialPosition(SpawnPoint.at(i));
-        EventQueue.append( "WD " + QString::number(clientList->at(i)->getNumber()) + QString(" ") + QString::number(SpawnPoint.at(i).x) + QString(" ") + QString::number(SpawnPoint.at(i).y) + "\n");
+        EventQueue.append( "WD " + QString::number(clientList->at(i)->getNumber()) + QString(" ") + QString::number(SpawnPoint.at(i).x) + QString(" ") + QString::number(SpawnPoint.at(i).y) + QString(" ") + QString::number(0) +"\n");
     }
 }
 
