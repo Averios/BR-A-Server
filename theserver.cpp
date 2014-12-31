@@ -18,6 +18,7 @@ void TheServer::startserver(){
     playerCount = 0;
 
     broadcast = new Broadcaster(&clientList, this);
+    broadcast->setMap(&clientMap);
     broadcast->run();
     bullet = new BulletCalculator(&clientList, this);
     bullet->addBroadcaster(broadcast);
@@ -29,8 +30,10 @@ void TheServer::incomingConnection(qintptr socketDescriptor){
     ClientThread* client = new ClientThread(socketDescriptor, &clientList, this);
     client->addBroadcaster(broadcast);
     client->addBulletCalculator(bullet);
-    client->setNumber(playerCount++);
+    client->setNumber(playerCount);
     connect(client, SIGNAL(finished()), client, SLOT(deleteLater()));
+    clientMap.insert(playerCount++, client);
+    client->setMap(&clientMap);
     client->run();
 //    qDebug() << "Client Running";
 //    broadcast->StartGame();

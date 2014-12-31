@@ -74,6 +74,10 @@ void Broadcaster::StartGame(){
 void Broadcaster::respawn(int player){
     std::uniform_int_distribution<> rand(0, SpawnPoint.size() - 1);
     sf::Vector2f point = SpawnPoint.at(rand(rng));
-    clientList->at(player)->setInitialPosition(point);
+    clientMap->value(player)->setInitialPosition(point);
     EventQueue.append( "WD " + QString::number(player) + QString(" ") + QString::number(point.x) + QString(" ") + QString::number(point.y) + QString(" ") + QString::number(0) + "\n");
+}
+
+void Broadcaster::setMap(QMap<int, ClientThread *> *clientMap){
+    this->clientMap = clientMap;
 }

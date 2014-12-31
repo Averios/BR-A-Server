@@ -88,6 +88,7 @@ void ClientThread::disconnected(){
     qDebug() << "Disconnected";
 
     clientList->removeOne(this);
+    clientMap->remove(playerNumber);
     socket->deleteLater();
     exit(0);
 }
@@ -179,4 +180,8 @@ void ClientThread::setInitialPosition(sf::Vector2f position){
 
 void ClientThread::resetCounter(){
     moveCounter = 0;
+}
+
+void ClientThread::setMap(QMap<int, ClientThread *> *clientMap){
+    this->clientMap = clientMap;
 }

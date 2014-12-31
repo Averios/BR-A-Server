@@ -19,6 +19,7 @@ protected:
     void incomingConnection(qintptr socketDescriptor);
 private:
     QList<ClientThread*> clientList;
+    QMap<int, ClientThread*> clientMap;
     Broadcaster* broadcast;
     BulletCalculator* bullet;
     int playerCount;

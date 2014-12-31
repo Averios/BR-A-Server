@@ -35,6 +35,7 @@ public:
     sf::FloatRect getBoundingBox();
     int getNumber();
     void resetCounter();
+    void setMap(QMap<int, ClientThread*>* clientMap);
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
@@ -49,6 +50,7 @@ private:
     QTcpSocket* socket;
     qintptr socketDescriptor;
     QList<ClientThread*>* clientList;
+    QMap<int, ClientThread*>* clientMap;
     QQueue<QPair<QString, float > >* moveQueue;
     QTimer* processTimer;
     QString name;
