@@ -18,6 +18,7 @@ void BulletCalculator::addEvent(QString event){
 
 void BulletCalculator::OnStart(){
     //Do something maybe?
+    loadMap();
 }
 
 void BulletCalculator::processQueue(){
@@ -32,6 +33,7 @@ void BulletCalculator::processQueue(){
         sf::Vector2f pos(stringList[1].toDouble(), stringList[2].toDouble());
         Bullet newBullet(pos, stringList[3].toDouble());
         newBullet.setSender(stringList[4].toInt());
+        newBullet.setSpeed(500);
         BulletList.append(newBullet);
     }
 
@@ -54,6 +56,7 @@ void BulletCalculator::processQueue(){
         else{
             bool collide2 = false;
             for(ClientThread* player : (*clientList)){
+                if(player->getNumber() == now.getSender()) continue;
                 if(now.getBoundingBox().intersects(player->getBoundingBox())){
                     broadcast->addEvent("K " + QString::number(now.getSender()) + QString(" ") + QString::number(player->getNumber()) + "\n");
                     //Send the respawn point to player
@@ -68,6 +71,10 @@ void BulletCalculator::processQueue(){
         }
         counter++;
     }
+//    for(const Bullet& now : removal){
+//        BulletList.re
+//    }
+//    removal.clear();
 }
 
 void BulletCalculator::loadMap(){

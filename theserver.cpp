@@ -20,6 +20,7 @@ void TheServer::startserver(){
     broadcast = new Broadcaster(&clientList, this);
     broadcast->run();
     bullet = new BulletCalculator(&clientList, this);
+    bullet->addBroadcaster(broadcast);
     bullet->run();
 }
 

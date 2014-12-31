@@ -27,6 +27,7 @@ private:
     Broadcaster* broadcast;
     QList<ClientThread*>* clientList;
     QList<Bullet> BulletList;
+    QList<Bullet> removal;
 
     sf::Clock myClock;
     sf::Time Elapsed;

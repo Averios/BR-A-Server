@@ -53,9 +53,10 @@ void ClientThread::readyRead(){
         }
         else if(now.at(0) == 'F'){
             QString Fire = now;
-            broadcast->addEvent(Fire);
-            Fire.append(QString(" ") + QString::number(playerNumber));
-            bullet->addEvent(Fire);
+//            broadcast->addEvent(Fire);
+            QString Fire2 = Fire.split("\n").at(0);
+            Fire2.append(QString(" ") + QString::number(playerNumber));
+            bullet->addEvent(Fire2);
         }
         else if(now.at(0) == 'C'){
             QString message;
