@@ -12,6 +12,9 @@ public:
     void update(float time);
     int getSender();
     sf::FloatRect getBoundingBox();
+    const bool operator ==(const Bullet &b);
+    sf::Vector2f getPosition();
+    double getAngle();
 private:
     sf::Vector2f position;
     double angel;

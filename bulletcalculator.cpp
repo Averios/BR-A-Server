@@ -51,7 +51,8 @@ void BulletCalculator::processQueue(){
             }
         }
         if(collided){
-            BulletList.removeAt(counter);
+//            BulletList.removeAt(counter);
+            removal.append(now);
         }
         else{
             bool collide2 = false;
@@ -60,21 +61,23 @@ void BulletCalculator::processQueue(){
                 if(now.getBoundingBox().intersects(player->getBoundingBox())){
                     broadcast->addEvent("K " + QString::number(now.getSender()) + QString(" ") + QString::number(player->getNumber()) + "\n");
                     //Send the respawn point to player
+                    player->resetCounter();
                     broadcast->respawn(player->getNumber());
                     collide2 = true;
                     break;
                 }
             }
             if(collide2){
-                BulletList.removeAt(counter);
+//                BulletList.removeAt(counter);
+                removal.append(now);
             }
         }
         counter++;
     }
-//    for(const Bullet& now : removal){
-//        BulletList.re
-//    }
-//    removal.clear();
+    for(Bullet& now : removal){
+        BulletList.removeAll(now);
+    }
+    removal.clear();
 }
 
 void BulletCalculator::loadMap(){

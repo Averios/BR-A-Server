@@ -26,3 +26,17 @@ sf::FloatRect Bullet::getBoundingBox(){
 int Bullet::getSender(){
     return sender;
 }
+
+const bool Bullet::operator ==(const Bullet& b){
+//    return (this->position == b.getPosition()) && (this->angel == b.getAngle());
+    Bullet c = b;
+    return (this->position == c.getPosition()) && (this->angel == c.getAngle());
+}
+
+sf::Vector2f Bullet::getPosition(){
+    return this->position;
+}
+
+double Bullet::getAngle(){
+    return angel;
+}
