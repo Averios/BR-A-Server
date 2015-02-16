@@ -4,6 +4,7 @@
 #include <QTcpServer>
 #include "broadcaster.h"
 #include "clientthread.h"
+#include "bulletcalculator.h"
 
 class TheServer : public QTcpServer
 {

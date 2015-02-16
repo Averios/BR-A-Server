@@ -12,3 +12,7 @@ void BatchProcessor::run(){
     connect(&processTimer, SIGNAL(timeout()), this, SLOT(processQueue()));
     processTimer.start();
 }
+
+QQueue<QString>* BatchProcessor::getList(){
+    return &EventQueue;
+}

@@ -9,15 +9,8 @@
 #include <QTimer>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <tmx/MapLoader.h>
 
-#include "batchprocessor.h"
-#include "broadcaster.h"
-#include "bulletcalculator.h"
-
-
-class BatchProcessor;
-class BulletCalculator;
-class Broadcaster;
 
 class ClientThread : public QThread
 {
@@ -26,8 +19,8 @@ public:
     explicit ClientThread(qintptr ID, QList<ClientThread*>* clientList, QObject *parent = 0);
     virtual ~ClientThread();
     void run();
-    void addBroadcaster(Broadcaster* broadcast);
-    void addBulletCalculator(BulletCalculator* bullet);
+    void addBroadcaster(QQueue<QString>* broadcast);
+    void addBulletCalculator(QQueue<QString>* bullet);
     void sendData(QString data);
     void setInitialPosition(sf::Vector2f position);
     void setNumber(int number);
@@ -36,6 +29,7 @@ public:
     int getNumber();
     void resetCounter();
     void setMap(QMap<int, ClientThread*>* clientMap);
+    void setEnvironment(tmx::MapLoader* map);
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
@@ -46,7 +40,6 @@ public slots:
     void processQueue();
 
 private:
-    void loadMap();
     QTcpSocket* socket;
     qintptr socketDescriptor;
     QList<ClientThread*>* clientList;
@@ -60,8 +53,8 @@ private:
     sf::Vector2f position;
     sf::Vector2f movement;
 
-    Broadcaster* broadcast;
-    BulletCalculator* bullet;
+    QQueue<QString>* broadcast;
+    QQueue<QString>* bullet;
     sf::Time Elapsed;
     sf::Time Last;
     sf::Clock myClock;

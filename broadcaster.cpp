@@ -23,7 +23,10 @@ void Broadcaster::processQueue(){
 //    }
     while(!EventQueue.isEmpty()){
         eventNow = EventQueue.dequeue();
-        std::cout << eventNow.toStdString() << std::endl;
+//        std::cout << eventNow.toStdString() << std::endl;
+        if(eventNow == "GS\n"){
+            this->StartGame();
+        }
         int size = clientList->size();
         for(int i = 0; i < size; i++){
             clientList->at(i)->sendData(eventNow);
@@ -68,7 +71,7 @@ void Broadcaster::initiatePosition(){
 void Broadcaster::StartGame(){
     qDebug() << "Game Started";
     initiatePosition();
-    EventQueue.append("GS\n");
+//    EventQueue.append("GS\n");
 }
 
 void Broadcaster::respawn(int player){

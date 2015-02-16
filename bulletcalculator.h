@@ -2,12 +2,9 @@
 #define BULLETCALCULATOR_H
 
 #include "batchprocessor.h"
-#include "broadcaster.h"
 #include "clientthread.h"
 #include "bullet.h"
-
-class ClientThread;
-class Broadcaster;
+#include "broadcaster.h"
 
 class BulletCalculator : public BatchProcessor
 {
@@ -15,7 +12,7 @@ class BulletCalculator : public BatchProcessor
 public:
     explicit BulletCalculator(QList<ClientThread *> *clientList, QObject *parent = 0);
     void addEvent(QString event);
-    void addBroadcaster(Broadcaster* broadcast);
+    void addBroadcaster(Broadcaster *broadcast);
 signals:
 
 public slots:

@@ -28,12 +28,13 @@ void TheServer::startserver(){
 void TheServer::incomingConnection(qintptr socketDescriptor){
     qDebug() << "Connecting...";
     ClientThread* client = new ClientThread(socketDescriptor, &clientList, this);
-    client->addBroadcaster(broadcast);
-    client->addBulletCalculator(bullet);
+    client->addBroadcaster(broadcast->getList());
+    client->addBulletCalculator(bullet->getList());
     client->setNumber(playerCount);
     connect(client, SIGNAL(finished()), client, SLOT(deleteLater()));
     clientMap.insert(playerCount++, client);
     client->setMap(&clientMap);
+    client->setEnvironment(broadcast->getMap());
     client->run();
 //    qDebug() << "Client Running";
 //    broadcast->StartGame();

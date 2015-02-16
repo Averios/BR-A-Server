@@ -56,7 +56,7 @@ void ClientThread::readyRead(){
 //            broadcast->addEvent(Fire);
             QString Fire2 = Fire.split("\n").at(0);
             Fire2.append(QString(" ") + QString::number(playerNumber));
-            bullet->addEvent(Fire2);
+            bullet->append(Fire2);
         }
         else if(now.at(0) == 'C'){
             QString message;
@@ -65,16 +65,16 @@ void ClientThread::readyRead(){
             for(int j = 1; j < msgSize; j++){
                 message += " " + msgList.at(j);
             }
-            broadcast->addEvent(QString("C ") + QString::number(this->playerNumber) + message + "\n");
+            broadcast->append(QString("C ") + QString::number(this->playerNumber) + message + "\n");
         }
     }
 }
 
-void ClientThread::addBroadcaster(Broadcaster *broadcast){
+void ClientThread::addBroadcaster(QQueue<QString> *broadcast){
     this->broadcast = broadcast;
 }
 
-void ClientThread::addBulletCalculator(BulletCalculator *bullet){
+void ClientThread::addBulletCalculator(QQueue<QString> *bullet){
     this->bullet = bullet;
 }
 
@@ -96,30 +96,32 @@ void ClientThread::disconnected(){
 void ClientThread::processQueue(){
     //Do calculation and send to broadcaster
     Elapsed = myClock.restart();
-    Elapsed /= (float)moveQueue->size();
-    Last = sf::seconds(0);
+    bool queueEmpty = moveQueue->empty();
     QPair<QString, float> moveString;
-    bool queueEmpty = moveQueue->isEmpty();
-    while(!moveQueue->isEmpty()){
-        moveString = moveQueue->dequeue();
+    Elapsed /= (float)moveQueue->size();
+    while(!moveQueue->empty()){
         movement.x = 0;
         movement.y = 0;
-//        qDebug() << moveString.first;
+        moveString = moveQueue->dequeue();
         switch(moveString.first.at(1).toLatin1()){
-            case 'U' : movement.y -= movespeed;
+            case 'U':
+                movement.y -= movespeed;
                 break;
-            case 'D' : movement.y += movespeed;
+            case 'D':
+                movement.y += movespeed;
                 break;
-            case 'R' : movement.x += movespeed;
+            case 'R':
+                movement.x += movespeed;
                 break;
-            case 'L' : movement.x -= movespeed;
+            case 'L':
+                movement.x -= movespeed;
                 break;
         }
         movement *= Elapsed.asSeconds();
         bool collided = false;
-        for(const tmx::MapObject* now : map->QueryQuadTree(getBoundingBox())){
-            if(now->GetName() == "Wall" || now->GetName() == "Edge"){
-                if(now->GetAABB().intersects(sf::FloatRect(position.x + movement.x, position.y + movement.y + 32.f, 32.f, 16.f))){
+        for(const tmx::MapObject* obj : map->QueryQuadTree(this->getBoundingBox())){
+            if(obj->GetName() == "Wall" || obj->GetName() == "Edge"){
+                if(obj->GetAABB().intersects(sf::FloatRect(position.x + movement.x, position.y + movement.y + 32.f, 32.f, 16.f))){
                     collided = true;
                     break;
                 }
@@ -137,7 +139,7 @@ void ClientThread::processQueue(){
         //W num U/D/R/L X Y Seq
         QString theEvent = moveString.first.split(" ").at(0) + QString(" ") + QString::number(playerNumber) + QString(" ") + QString::number(position.x) + QString(" ") + QString::number(position.y) + " " + QString::number(moveCounter) + "\n";
         std::cout << theEvent.toStdString();
-        broadcast->addEvent(theEvent);
+        broadcast->append(theEvent);
     }
 
 }
@@ -146,19 +148,19 @@ sf::FloatRect ClientThread::getBoundingBox(){
     return sf::FloatRect(position.x, position.y, 32, 48);
 }
 
-void ClientThread::loadMap(){
-    this->map = broadcast->getMap();
+void ClientThread::setEnvironment(tmx::MapLoader *map){
+    this->map = map;
 }
 
 void ClientThread::startGame(){
-    loadMap();
     //Send notification to player
     QString message("P " + QString::number(playerNumber).toUtf8() + "\n");
     qDebug() << message;
     socket->write(message.toUtf8());
 //    broadcast->respawn(this->playerNumber);
 //    socket->flush();
-    broadcast->StartGame();
+//    broadcast->StartGame();
+    broadcast->append("GS\n");
 }
 
 void ClientThread::setNumber(int number){

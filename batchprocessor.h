@@ -7,7 +7,6 @@
 #include <QLinkedList>
 #include <tmx/MapLoader.h>
 
-
 class BatchProcessor : public QThread
 {
     Q_OBJECT
@@ -15,6 +14,7 @@ public:
     explicit BatchProcessor(QObject *parent = 0, int interval = 10);
     void run();
     virtual void addEvent(QString event) = 0;
+    QQueue<QString>* getList();
 signals:
 
 public slots:
